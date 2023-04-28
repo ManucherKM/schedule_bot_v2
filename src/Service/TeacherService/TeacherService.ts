@@ -66,24 +66,16 @@ class Teacher {
 				continue
 			}
 
-			for (let i = 0; i < 8; i++) {
-				const lesson = item.lessons[i]
-				const count = i + 1
-
-				if (!lesson) {
-					// message += `\n<b>Пара ${count}: Нет пары</b>\n`
-					continue
-				}
-
+			item.lessons.forEach(lesson => {
 				const group = lesson.group || '-'
 				const discipline = SupplyReduction(lesson.discipline || '-', 26)
 				const auditoria = lesson.auditoria || '-'
 				const territory = lesson.territory?.split(')')[0].replace('(', '') || '-'
 
-				message += `\n<b>Пара ${count}.</b>\nПредмет: ${discipline}\n${auditoria
+				message += `\n<b>Пара ${lesson.number_lesson}.</b>\nПредмет: ${discipline}\n${auditoria
 					.split(' ')
 					.join(': ')}\nПодразделение: ${territory}\nГруппа: ${group}\n`
-			}
+			})
 		}
 
 		await bot.sendMessage(chatId, message, { parse_mode: 'HTML' })
