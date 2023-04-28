@@ -3,7 +3,6 @@ import mongoose from 'mongoose'
 import TelegramApi from 'node-telegram-bot-api'
 import { commands } from './Config/commands'
 import { init } from './Config/init'
-
 ;(async () => {
 	const { TOKEN, DB_URL } = process.env
 

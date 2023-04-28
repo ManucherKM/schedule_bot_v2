@@ -1,47 +1,13 @@
+import { Bells } from '@/Config'
 import { SpkApiController } from '@/Controller'
 import { CreateTable, SupplyReduction } from '@/Helper'
 import { StudentModel, UserModel } from '@/Model'
 import { IStudent } from '@/Service/types'
 import type TelegramApi from 'node-telegram-bot-api'
 import type { Message, SendMessageOptions } from 'node-telegram-bot-api'
-import { TableUserConfig } from 'table'
 import { Menu } from './Buttons/Buttons'
 
 const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
-const bells = [
-	{
-		start: '8:30',
-		end: '9:50',
-	},
-	{
-		start: '10:00',
-		end: '11:50',
-	},
-	{
-		start: '12:00',
-		end: '13:20',
-	},
-	{
-		start: '13:30',
-		end: '14:50',
-	},
-	{
-		start: '15:00',
-		end: '16:20',
-	},
-	{
-		start: '16:30',
-		end: '17:50',
-	},
-	{
-		start: '18:00',
-		end: '19:20',
-	},
-	{
-		start: '19:30',
-		end: '20:50',
-	},
-]
 
 class Student {
 	async start(bot: TelegramApi, msg: Message) {
@@ -138,7 +104,7 @@ class Student {
 
 		const data = [['№', 'Начало', 'Конец']]
 
-		bells.forEach(({ start, end }, idx) => {
+		Bells.forEach(({ start, end }, idx) => {
 			const row = [`${idx + 1}`, `${start}`, `${end}`]
 			data.push(row)
 		})
@@ -247,7 +213,7 @@ class Student {
 
 		const data = [['Предмет', 'Оценки', 'Балл']]
 
-		const config: TableUserConfig = {
+		const config: any = {
 			columns: [
 				{
 					width: 13,
