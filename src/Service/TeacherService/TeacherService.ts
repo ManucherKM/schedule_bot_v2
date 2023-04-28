@@ -1,8 +1,8 @@
 import { Bells, Commands } from '@/Config'
-import { ChatController, SpkApiController } from '@/Controller'
+import { ActivityController, ChatController, SpkApiController } from '@/Controller'
 import { CreateTable, SupplyReduction } from '@/Helper'
 import { TeacherModel, UserModel } from '@/Model'
-import { ITeacher } from '@/Service/types'
+import { IActivity, ITeacher } from '@/Service/types'
 import type TelegramApi from 'node-telegram-bot-api'
 import type { Message, SendMessageOptions } from 'node-telegram-bot-api'
 import { Menu } from './Buttons/Buttons'
@@ -14,11 +14,17 @@ class Teacher {
 		const chatId = msg.chat.id
 		const message = 'Главное меню'
 
-		await bot.sendMessage(chatId, message, {
-			...Menu,
+		await bot.sendMessage(chatId, message, { ...Menu })
+
+		const res = await ActivityController.updateByChat(chatId, prev => {
+			const target: IActivity = {
+				start: (prev.start as number) + 1,
+			}
+
+			return target
 		})
 
-		return true
+		return res
 	}
 
 	async createTeacher(target: ITeacher) {

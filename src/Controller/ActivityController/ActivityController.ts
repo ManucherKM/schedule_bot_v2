@@ -1,8 +1,9 @@
 import { ActivityService } from '@/Service'
 import { IActivity } from '@/Service/types'
+import { Types } from 'mongoose'
 
 class Activity {
-	async getById(id: string) {
+	async getById(id: Types.ObjectId) {
 		try {
 			if (!id) {
 				console.log('Не удалось найти id активности')
@@ -62,7 +63,7 @@ class Activity {
 		}
 	}
 
-	async updateActivity(id: string, target: Partial<IActivity>) {
+	async updateActivity(id: Types.ObjectId, target: Partial<IActivity>) {
 		try {
 			if (!id || !target) {
 				console.log('Не удалось найти id активности или объект с изменениями')
@@ -70,6 +71,26 @@ class Activity {
 			}
 
 			const res = await ActivityService.updateActivity(id, target)
+
+			if (!res) {
+				console.log('Не удалось удалить активность')
+				return
+			}
+
+			return res
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	async updateByChat(chatId: number, callback: (prev: IActivity) => Partial<IActivity>) {
+		try {
+			if (!chatId || !callback) {
+				console.log('Не удалось найти id чата или коллбэк с изменениями')
+				return
+			}
+
+			const res = await ActivityService.updateByChat(chatId, callback)
 
 			if (!res) {
 				console.log('Не удалось удалить активность')
