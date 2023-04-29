@@ -1,5 +1,6 @@
 import { StudentService } from '@/Service'
 import { IStudent } from '@/Service/types'
+import { Types } from 'mongoose'
 import type TelegramApi from 'node-telegram-bot-api'
 import type { Message } from 'node-telegram-bot-api'
 
@@ -155,6 +156,26 @@ class Student {
 
 			if (!res) {
 				console.log('Не удалось отправить сообщение о помощи студенту')
+				return
+			}
+
+			return res
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	async update(id: Types.ObjectId, target: Partial<IStudent>) {
+		try {
+			if (!id || !target) {
+				console.log('Не удалось найти id или объект с изменениями')
+				return
+			}
+
+			const res = await StudentService.update(id, target)
+
+			if (!res) {
+				console.log('Не удалось обновить студента')
 				return
 			}
 

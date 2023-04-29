@@ -4,7 +4,7 @@ import { Types } from 'mongoose'
 interface IStudent {
 	stage: string
 	group: string
-	profile?: IProfile
+	profile?: IProfile | Types.ObjectId
 }
 
 interface ITeacher {

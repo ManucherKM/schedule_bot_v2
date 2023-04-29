@@ -1,8 +1,9 @@
 import { ProfileModel } from '@/Model'
+import { Types } from 'mongoose'
 import { IProfile } from './Types'
 
 class Profile {
-	async getById(id: string) {
+	async getById(id: Types.ObjectId) {
 		const profile = await ProfileModel.findById({ _id: id })
 		return profile
 	}

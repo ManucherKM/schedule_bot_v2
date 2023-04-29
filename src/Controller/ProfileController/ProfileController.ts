@@ -1,8 +1,9 @@
 import { ProfileService } from '@/Service'
 import { IProfile } from '@/Service/types'
+import { Types } from 'mongoose'
 
 class Profile {
-	async getById(id: string) {
+	async getById(id: Types.ObjectId) {
 		try {
 			if (!id) {
 				console.log('Не удалось найти id роли')

@@ -1,8 +1,9 @@
 import { Bells, Commands } from '@/Config'
-import { ChatController, SpkApiController } from '@/Controller'
+import { ChatController, ProfileController, SpkApiController, StudentController } from '@/Controller'
 import { CreateTable, SupplyReduction } from '@/Helper'
 import { StudentModel, UserModel } from '@/Model'
 import { IStudent } from '@/Service/types'
+import { Types } from 'mongoose'
 import type TelegramApi from 'node-telegram-bot-api'
 import type { Message, SendMessageOptions } from 'node-telegram-bot-api'
 import { Menu } from './Buttons/Buttons'
@@ -148,64 +149,90 @@ class Student {
 	async getRatings(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const user: any = await UserModel.findOne({ chatId }).populate('student')
+		const chat = await ChatController.getById(chatId)
+
+		if (!chat) {
+			throw new Error('Не удалось найти чат')
+		}
+
+		const user = await UserModel.findOne({ chat: chat._id })
 
 		if (!user) {
 			throw new Error('Не удалось найти пользователя')
 		}
 
-		const isKeys = !user.student.profile
+		const student = await StudentModel.findById({ _id: user.student })
 
-		if (isKeys) {
-			const message = 'Для просмотра оценок необходимо предоставить логин и пароль от учетной записи СПК'
+		if (!student) {
+			throw new Error('Не удалось найти студента')
+		}
+
+		if (!student.profile) {
+			const message =
+				'Для просмотра оценок необходимо предоставить логин и пароль от учетной записи СПК.\nЧто бы просматривать свои оценки ответь на это сообщение (прим. пролестнув сообщение в левую сторону) указав свой логин и пароль в формате:\nЛОГИН ПАРОЛЬ'
 
 			const { message_id } = await bot.sendMessage(chatId, message)
 
 			bot.onReplyToMessage(chatId, message_id, async msg => {
-				const student = await StudentModel.findOne({ chatId })
-
-				if (!student) {
-					throw new Error('Не удалось найти студента')
-				}
-
-				const { text } = msg
+				const text = msg.text
 
 				if (!text) return
 
 				const [login, password] = text.split(' ')
 
-				const target = {
-					profile: {
-						login,
-						password,
-					},
-				} as IStudent
+				const ratings = await SpkApiController.getRatings(login, password)
 
-				const updateStudent = await StudentModel.updateOne({ chatId }, target)
-
-				console.log(updateStudent.acknowledged)
-
-				if (!updateStudent.acknowledged) {
-					const message = 'Не удалось обновить профиль'
-
-					await bot.sendMessage(chatId, message)
+				if (!ratings) {
+					console.log('Не удалось получить оценки')
+					await bot.sendMessage(chatId, 'Неверный логин или пароль')
 					return
 				}
 
-				const message = 'Данные успешно сохранены\nЧтобы посмотреть оценки введите команду "Оценки"'
+				const profile = await ProfileController.create({
+					login,
+					password,
+				})
 
-				await bot.sendMessage(chatId, message)
+				if (!profile) {
+					await bot.sendMessage(chatId, 'Не удалось создать профиль студента')
+					console.log('Не удалось создать профиль студента')
+					return
+				}
+
+				const studentId = user.student as unknown as Types.ObjectId
+
+				const student = await StudentController.update(studentId, { profile: profile._id })
+
+				if (!student) {
+					await bot.sendMessage(chatId, 'Не удалось обновить профиль')
+					return
+				}
+
+				const res = await bot.sendMessage(
+					chatId,
+					'Данные успешно сохранены\nЧтобы посмотреть оценки введите команду "Оценки"',
+				)
+
+				return res
 			})
 
 			return
 		}
 
-		const { login, password } = user.student.profile
+		const profile = await ProfileController.getById(student.profile as Types.ObjectId)
+
+		if (!profile) {
+			await bot.sendMessage(chatId, 'Не удалось получить профиль студента')
+			throw new Error('Не удалось получить профиль студента')
+		}
+
+		const { login, password } = profile
 
 		const ratings = await SpkApiController.getRatings(login, password)
 
 		if (!ratings) {
-			bot.sendMessage(chatId, 'Не удалось получить оценки')
+			console.log('Не удалось получить оценки')
+			await bot.sendMessage(chatId, 'Не удалось получить оценки')
 			return
 		}
 
@@ -292,6 +319,11 @@ class Student {
 		await bot.sendMessage(chatId, message, options)
 
 		return true
+	}
+
+	async update(id: Types.ObjectId, target: Partial<IStudent>) {
+		const res = await StudentModel.updateOne({ _id: id }, target)
+		return res.acknowledged
 	}
 }
 
