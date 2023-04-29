@@ -216,7 +216,7 @@ class Student {
 				return res
 			})
 
-			return
+			return true
 		}
 
 		const profile = await ProfileController.getById(student.profile as Types.ObjectId)
