@@ -1,5 +1,5 @@
 import { ProfileModel } from '@/Model'
-import { IProfile } from './types'
+import { IProfile } from './Types'
 
 class Profile {
 	async getById(id: string) {

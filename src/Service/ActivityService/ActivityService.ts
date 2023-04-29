@@ -1,7 +1,7 @@
 import { ActivityController, ChatController, UserController } from '@/Controller'
 import { ActivityModel } from '@/Model'
 import { Types } from 'mongoose'
-import { IActivity } from './types'
+import { IActivity } from './Types'
 
 class Activity {
 	async getById(id: Types.ObjectId) {

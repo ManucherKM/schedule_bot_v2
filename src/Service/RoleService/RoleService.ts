@@ -1,5 +1,5 @@
 import { RoleModel } from '@/Model'
-import { IRole } from './types'
+import { IRole } from './Types'
 
 class Role {
 	async getById(id: string) {

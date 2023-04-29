@@ -1,5 +1,5 @@
 import { ChatModel } from '@/Model'
-import { IChat } from './types'
+import { IChat } from './Types'
 
 class Chat {
 	async getById(chatId: number) {

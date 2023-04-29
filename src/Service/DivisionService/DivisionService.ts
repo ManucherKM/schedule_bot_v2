@@ -1,6 +1,6 @@
 import { DivisionModel } from '@/Model'
 import { Types } from 'mongoose'
-import { IDivision } from './types'
+import { IDivision } from './Types'
 
 class Division {
 	async getById(id: Types.ObjectId) {

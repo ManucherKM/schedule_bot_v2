@@ -14,7 +14,7 @@ import { Types, UpdateQuery } from 'mongoose'
 import type TelegramApi from 'node-telegram-bot-api'
 import type { InlineKeyboardButton, Message, SendMessageOptions } from 'node-telegram-bot-api'
 import path from 'path'
-import { ICandidate, IDtosUser } from './types'
+import { ICandidate, IDtosUser } from './Types'
 
 class User {
 	async getById(id: number) {
