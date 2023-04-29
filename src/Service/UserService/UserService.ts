@@ -5,6 +5,7 @@ import {
 	DivisionController,
 	RoleController,
 	SpkApiController,
+	StudentController,
 	TeacherController,
 	UserController,
 } from '@/Controller'
@@ -229,7 +230,70 @@ class User {
 				candidate.group = data
 
 				const message =
-					'Успех 🎉\n\nРегистрация окончена, чтобы использовать функционал бота перезапусти его командой /start'
+					'Успех 🎉\n\nРегистрация окончена, чтобы использовать функционал бота перезапусти его командой /start	'
+
+				if (!candidate.stage) {
+					await bot.sendMessage(chatId, 'Не удалось получить курс студента')
+					return
+				}
+
+				const student = await StudentController.create({ group: candidate.group, stage: candidate.stage })
+
+				if (!student) {
+					console.log('Не удалось создать учителя')
+					return
+				}
+
+				const chat = await ChatController.create({ chatId })
+
+				if (!chat) {
+					console.log('Не удалось создать чат')
+					return
+				}
+
+				const activity = await ActivityController.create({})
+
+				if (!activity) {
+					console.log('Не удалось создать модель активности')
+					return
+				}
+
+				const roleId = roles.find(r => r.name === candidate.role)?._id
+
+				if (!roleId) {
+					console.log('Не удалось получить роль')
+					return
+				}
+
+				const divisionId = divisions.find(d => d.shortName === candidate.division)?._id
+
+				if (!divisionId) {
+					console.log('Не удалось получить подразделение')
+					return
+				}
+
+				const user = await UserController.create({
+					division: divisionId,
+					role: roleId,
+					tgId: msg.chat.username,
+					student: student._id,
+					chat: chat._id,
+					activity: activity._id,
+				})
+
+				if (!user) {
+					console.log('Не удалось создать пользователя "Студент"')
+					return
+				}
+
+				const idxUser = candidats.findIndex(c => c.chatId === chatId)
+
+				if (idxUser === -1) {
+					console.log('Не удалось найти объект кандидата')
+					return
+				}
+
+				candidats.splice(idxUser, 1)
 
 				return await bot.sendMessage(chatId, message)
 			}
@@ -278,7 +342,7 @@ class User {
 				const user = await UserController.create({
 					division: divisionId,
 					role: roleId,
-					tgId: msg.chat.username || undefined,
+					tgId: msg.chat.username,
 					teacher: teacher._id,
 					chat: chat._id,
 					activity: activity._id,
