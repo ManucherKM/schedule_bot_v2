@@ -45,7 +45,7 @@ class Activity {
 
 		const res = await ActivityController.updateActivity(user.activity as Types.ObjectId, callback(activity))
 
-		return true
+		return res?.acknowledged
 	}
 }
 
