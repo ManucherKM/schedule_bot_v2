@@ -3,7 +3,7 @@ enum Commands {
 	getHelp = '🆘 Помощь',
 	getProfile = '💼 Профиль',
 	getPair = '📚 Пары',
-	getTeacher = '👨‍🏫 Учитель',
+	getTeacher = '🚪 Учитель',
 	getBell = '⏰ Звонки',
 	getCabinets = '🏢 Кабинеты',
 	getStatistics = '📊 Статистика',

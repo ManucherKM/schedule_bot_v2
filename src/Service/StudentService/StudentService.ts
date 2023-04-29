@@ -1,5 +1,5 @@
-import { Bells } from '@/Config'
-import { SpkApiController } from '@/Controller'
+import { Bells, Commands } from '@/Config'
+import { ChatController, SpkApiController } from '@/Controller'
 import { CreateTable, SupplyReduction } from '@/Helper'
 import { StudentModel, UserModel } from '@/Model'
 import { IStudent } from '@/Service/types'
@@ -34,69 +34,52 @@ class Student {
 	async getPair(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const user: any = await UserModel.findOne({ chatId }).populate('student')
+		const chat = await ChatController.getById(chatId)
+
+		if (!chat) {
+			throw new Error('Не удалось получить чат')
+		}
+
+		const user = await UserModel.findOne({ chat: chat._id }).populate('student').populate('division')
 
 		if (!user) {
 			throw new Error('Не удалось найти пользователя')
 		}
 
-		const schedule = await SpkApiController.getSchedule(user.division, user.student?.group)
+		const schedule = await SpkApiController.getSchedule(user.division.shortName, user.student?.group)
 
 		if (!schedule) {
+			await bot.sendMessage(chatId, 'Не удалось получить расписание студента')
 			console.log('Не удалось получить расписание студента')
 			return
 		}
 
-		// schedule.forEach((item, idx) => {
-		// 	let message = `<b>${days[idx]}</b>\n`
-		// 	const data = []
-
-		// 	for (let i = 1; i <= 8; i++) {
-		// 		if (!item.lessons[i]) continue
-
-		// 		const number = i.toString()
-		// 		const discipline = SupplyReduction(item.lessons[i]?.discipline, 22) || '-'
-		// 		const auditoria = item.lessons[i]?.auditoria?.split('№')[1] || '-'
-		// 		const territory = item.lessons[i]?.territory?.split(')')[0].replace('(', '') || '-'
-
-		// 		data.push([number, discipline, auditoria, territory])
-		// 	}
-
-		// 	data.unshift(['№', 'Предмет', 'Кабинет', 'Подразделение'])
-
-		// 	const table = CreateTable(data)
-
-		// 	message += '<pre style="overflow-x: auto;">' + table + '</pre>\n\n'
-		// 	const options: SendMessageOptions = {
-		// 		parse_mode: 'HTML',
-		// 	}
-
-		// 	bot.sendMessage(chatId, message, options)
-
-		// 	console.log(message)
-		// })
 		let message = ''
 
-		schedule.forEach((item, idx) => {
-			message += `<b>${days[idx]}</b>\n`
+		for (let i = 0; i < schedule.length; i++) {
+			const item = schedule[i]
 
-			for (let i = 0; i < 8; i++) {
-				const number = (i + 1).toString()
-				const discipline = SupplyReduction(item.lessons[i]?.discipline, 22) || 'Нет пары'
-				const auditoria = item.lessons[i]?.auditoria?.split('№')[1]
-				const formatAuditoria = auditoria ? `[${auditoria}]` : ''
+			message += `\n<b>${days[i]}</b>: `
 
-				message += `${number}. ` + `${discipline} ` + formatAuditoria + '\n'
+			if (item.lessons.length === 0) {
+				message += 'выходной :)'
+				continue
 			}
-		})
 
-		const options: SendMessageOptions = {
-			parse_mode: 'HTML',
+			item.lessons.forEach(lesson => {
+				const discipline = SupplyReduction(lesson.discipline || '-', 26)
+				const auditoria = lesson.auditoria || '-'
+				const territory = lesson.territory?.split(')')[0].replace('(', '') || '-'
+
+				message += `\n<b>Пара ${
+					lesson.number_lesson
+				}.</b>\nПредмет: ${discipline}\nМесто: ${auditoria.toLowerCase()}\nПодразделение: ${territory}\n`
+			})
 		}
 
-		bot.sendMessage(chatId, message, options)
+		const res = await bot.sendMessage(chatId, message, { parse_mode: 'HTML' })
 
-		return true
+		return res
 	}
 
 	async getBell(bot: TelegramApi, msg: Message) {
@@ -123,28 +106,43 @@ class Student {
 	async getProfile(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const user: any = await UserModel.findOne({ chatId }).populate('student')
+		const chat = await ChatController.getById(chatId)
+
+		if (!chat) {
+			throw new Error('Не удалось найти чат')
+		}
+
+		const user = await UserModel.findOne({ chat: chat._id })
+			.populate('student')
+			.populate('role')
+			.populate('activity')
+			.populate('division')
 
 		if (!user) {
 			throw new Error('Не удалось найти пользователя')
 		}
 
-		const data = []
+		const main = []
 
-		data.push(['Группа', user.student.group])
-		data.push(['Курс', user.student.stage])
-		data.push(['Подразделение', user.division])
-		data.push(['Роль', user.role])
+		main.push(['Группа', user.student?.group])
+		main.push(['Курс', user.student?.stage])
+		main.push(['Подразделение', user.division.shortName])
+		main.push(['Роль', user.role.name])
 
-		const message = '<pre>' + CreateTable(data) + '</pre>'
+		const secondary = []
 
-		const options: SendMessageOptions = {
-			parse_mode: 'HTML',
-		}
+		secondary.push([Commands.getHelp, user.activity.getHelp])
+		secondary.push([Commands.getPair, user.activity.getPair])
+		secondary.push([Commands.getBell, user.activity.getBell])
+		secondary.push([Commands.getProfile, user.activity.getProfile])
+		secondary.push([Commands.getRatings, user.activity.getRatings])
+		secondary.push([Commands.getTeacher, user.activity.getTeacher])
 
-		await bot.sendMessage(chatId, message, options)
+		const message = `Основное\n<pre>${CreateTable(main)}</pre>\nСтатистика:\n<pre>${CreateTable(secondary)}</pre>`
 
-		return true
+		const res = await bot.sendMessage(chatId, message, { parse_mode: 'HTML' })
+
+		return res
 	}
 
 	async getRatings(bot: TelegramApi, msg: Message) {
@@ -255,11 +253,9 @@ class Student {
 					currentRatings.push(Оценка[0])
 				}
 			})
-			console.log(currentRatings)
 
 			data.push([subject, currentRatings.join(', ') || '-', score.toString()])
 		})
-		console.log(CreateTable(data, config))
 
 		const message = '<pre>' + CreateTable(data, config) + '</pre>'
 

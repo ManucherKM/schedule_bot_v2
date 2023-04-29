@@ -64,15 +64,15 @@ class Teacher {
 				const auditoria = lesson.auditoria || '-'
 				const territory = lesson.territory?.split(')')[0].replace('(', '') || '-'
 
-				message += `\n<b>Пара ${lesson.number_lesson}.</b>\nПредмет: ${discipline}\n${auditoria
-					.split(' ')
-					.join(': ')}\nПодразделение: ${territory}\nГруппа: ${group}\n`
+				message += `\n<b>Пара ${
+					lesson.number_lesson
+				}.</b>\nПредмет: ${discipline}\nМесто: ${auditoria.toLowerCase()}\nПодразделение: ${territory}\nГруппа: ${group}\n`
 			})
 		}
 
-		await bot.sendMessage(chatId, message, { parse_mode: 'HTML' })
+		const res = await bot.sendMessage(chatId, message, { parse_mode: 'HTML' })
 
-		return true
+		return res
 	}
 
 	async getBell(bot: TelegramApi, msg: Message) {

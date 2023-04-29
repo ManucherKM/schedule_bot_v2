@@ -206,8 +206,8 @@ class User {
 
 				const groups = await SpkApiController.getGroups(candidate.division, data)
 
-				if (!groups) {
-					console.log('Не удалось получить список групп')
+				if (!groups?.length) {
+					await bot.sendMessage(chatId, 'Не удалось найти группы по заданным параметрам')
 					return
 				}
 
