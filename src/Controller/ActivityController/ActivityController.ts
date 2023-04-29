@@ -23,14 +23,14 @@ class Activity {
 		}
 	}
 
-	async createActivity(target: IActivity) {
+	async create(target: IActivity) {
 		try {
 			if (!target) {
 				console.log('Не удалось найти объект активности')
 				return
 			}
 
-			const res = await ActivityService.createActivity(target)
+			const res = await ActivityService.create(target)
 
 			if (!res) {
 				console.log('Не удалось создать активность')
@@ -43,14 +43,14 @@ class Activity {
 		}
 	}
 
-	async removeActivity(id: string) {
+	async removeById(id: string) {
 		try {
 			if (!id) {
 				console.log('ID активности не найден')
 				return
 			}
 
-			const res = await ActivityService.removeActivity(id)
+			const res = await ActivityService.removeById(id)
 
 			if (!res) {
 				console.log('Не удалось удалить активность')
@@ -63,14 +63,14 @@ class Activity {
 		}
 	}
 
-	async updateActivity(id: Types.ObjectId, target: Partial<IActivity>) {
+	async updateById(id: Types.ObjectId, target: Partial<IActivity>) {
 		try {
 			if (!id || !target) {
 				console.log('Не удалось найти id активности или объект с изменениями')
 				return
 			}
 
-			const res = await ActivityService.updateActivity(id, target)
+			const res = await ActivityService.updateById(id, target)
 
 			if (!res) {
 				console.log('Не удалось удалить активность')

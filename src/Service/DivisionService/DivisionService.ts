@@ -13,17 +13,17 @@ class Division {
 		return division
 	}
 
-	async createDivision(target: IDivision) {
+	async create(target: IDivision) {
 		const division = await DivisionModel.create(target)
 		return division
 	}
 
-	async removeDivision(id: string) {
+	async removeById(id: string) {
 		const res = await DivisionModel.deleteOne({ _id: id })
 		return res
 	}
 
-	async updateDivision(id: string, target: Partial<IDivision>) {
+	async updateById(id: string, target: Partial<IDivision>) {
 		const res = await DivisionModel.updateOne({ _id: id }, target)
 		return res
 	}

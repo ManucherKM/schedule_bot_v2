@@ -46,7 +46,7 @@ export async function init() {
 
 		if (candidate) continue
 
-		await RoleController.createRole(role)
+		await RoleController.create(role)
 	}
 
 	for (const division of divisions) {
@@ -54,6 +54,6 @@ export async function init() {
 
 		if (candidate) continue
 
-		await DivisionController.createDivision(division)
+		await DivisionController.create(division)
 	}
 }

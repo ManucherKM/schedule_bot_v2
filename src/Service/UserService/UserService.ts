@@ -240,21 +240,21 @@ class User {
 				const message =
 					'Успех 🎉\n\nРегистрация окончена, чтобы использовать функционал бота перезапусти его командой /start	'
 
-				const teacher = await TeacherController.createTeacher({ fullName: candidate.fullName })
+				const teacher = await TeacherController.create({ fullName: candidate.fullName })
 
 				if (!teacher) {
 					console.log('Не удалось создать учителя')
 					return
 				}
 
-				const chat = await ChatController.createChat({ chatId })
+				const chat = await ChatController.create({ chatId })
 
 				if (!chat) {
 					console.log('Не удалось создать чат')
 					return
 				}
 
-				const activity = await ActivityController.createActivity({})
+				const activity = await ActivityController.create({})
 
 				if (!activity) {
 					console.log('Не удалось создать модель активности')

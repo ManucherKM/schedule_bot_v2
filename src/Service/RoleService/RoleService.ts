@@ -12,17 +12,17 @@ class Role {
 		return role
 	}
 
-	async createRole(target: IRole) {
+	async create(target: IRole) {
 		const role = await RoleModel.create(target)
 		return role
 	}
 
-	async removeRole(id: string) {
+	async removeById(id: string) {
 		const res = await RoleModel.deleteOne({ _id: id })
 		return res
 	}
 
-	async updateRole(id: string, target: Partial<IRole>) {
+	async updateById(id: string, target: Partial<IRole>) {
 		const res = await RoleModel.updateOne({ _id: id }, target)
 		return res
 	}

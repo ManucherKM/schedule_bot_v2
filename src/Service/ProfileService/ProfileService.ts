@@ -7,17 +7,17 @@ class Profile {
 		return profile
 	}
 
-	async createProfile(target: IProfile) {
+	async create(target: IProfile) {
 		const profile = await ProfileModel.create(target)
 		return profile
 	}
 
-	async removeProfile(id: string) {
+	async removeById(id: string) {
 		const res = await ProfileModel.deleteOne({ _id: id })
 		return res
 	}
 
-	async updateProfile(id: string, target: Partial<IProfile>) {
+	async updateById(id: string, target: Partial<IProfile>) {
 		const res = await ProfileModel.updateOne({ _id: id }, target)
 		return res
 	}

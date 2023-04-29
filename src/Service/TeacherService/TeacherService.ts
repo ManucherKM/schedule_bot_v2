@@ -19,7 +19,7 @@ class Teacher {
 		return res
 	}
 
-	async createTeacher(target: ITeacher) {
+	async create(target: ITeacher) {
 		const teacher = await TeacherModel.create(target)
 		return teacher
 	}
@@ -27,7 +27,7 @@ class Teacher {
 	async getPair(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			throw new Error('Не удалось получить чат')
@@ -99,7 +99,7 @@ class Teacher {
 	async getProfile(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			throw new Error('Не удалось найти чат')

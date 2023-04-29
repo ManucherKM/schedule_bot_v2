@@ -21,7 +21,7 @@ class Student {
 		return true
 	}
 
-	async createStudent(target: IStudent) {
+	async create(target: IStudent) {
 		const student = await StudentModel.create(target)
 
 		if (!student) {

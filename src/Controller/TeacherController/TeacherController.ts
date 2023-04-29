@@ -24,14 +24,14 @@ class Teacher {
 		}
 	}
 
-	async createTeacher(target: ITeacher) {
+	async create(target: ITeacher) {
 		try {
 			if (!target) {
 				console.log('Не удалось создать учителя')
 				return
 			}
 
-			const res = await TeacherService.createTeacher(target)
+			const res = await TeacherService.create(target)
 
 			if (!res) {
 				console.log('Не удалось создать учителя')

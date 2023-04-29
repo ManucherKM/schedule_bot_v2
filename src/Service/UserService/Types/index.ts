@@ -1,5 +1,5 @@
+import { IActivity, IChat, IDivision, IProfile, IRole } from '@/Service/types'
 import { Types } from 'mongoose'
-import { IActivity, IChat, IDivision, IProfile, IRole } from '../types'
 
 interface IStudent {
 	stage: string

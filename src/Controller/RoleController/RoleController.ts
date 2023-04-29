@@ -32,14 +32,14 @@ class Role {
 		}
 	}
 
-	async createRole(target: IRole) {
+	async create(target: IRole) {
 		try {
 			if (!target) {
 				console.log('Не удалось найти объект роли')
 				return
 			}
 
-			const res = await RoleService.createRole(target)
+			const res = await RoleService.create(target)
 
 			if (!res) {
 				console.log('Не удалось создать роль')
@@ -52,14 +52,14 @@ class Role {
 		}
 	}
 
-	async removeRole(id: string) {
+	async removeById(id: string) {
 		try {
 			if (!id) {
 				console.log('ID роли не найден')
 				return
 			}
 
-			const res = await RoleService.removeRole(id)
+			const res = await RoleService.removeById(id)
 
 			if (!res) {
 				console.log('Не удалось удалить роль')
@@ -72,14 +72,14 @@ class Role {
 		}
 	}
 
-	async updateRole(id: string, target: Partial<IRole>) {
+	async updateById(id: string, target: Partial<IRole>) {
 		try {
 			if (!id || !target) {
 				console.log('Не удалось найти id роли или объект с изменениями')
 				return
 			}
 
-			const res = await RoleService.updateRole(id, target)
+			const res = await RoleService.updateById(id, target)
 
 			if (!res) {
 				console.log('Не удалось удалить роль')

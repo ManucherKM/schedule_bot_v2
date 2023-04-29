@@ -9,23 +9,23 @@ class Activity {
 		return activity
 	}
 
-	async createActivity(target: IActivity) {
+	async create(target: IActivity) {
 		const activity = await ActivityModel.create(target)
 		return activity
 	}
 
-	async removeActivity(id: string) {
+	async removeById(id: string) {
 		const res = await ActivityModel.deleteOne({ _id: id })
 		return res
 	}
 
-	async updateActivity(id: Types.ObjectId, target: Partial<IActivity>) {
+	async updateById(id: Types.ObjectId, target: Partial<IActivity>) {
 		const res = await ActivityModel.updateOne({ _id: id }, target)
 		return res
 	}
 
 	async updateByChat(chatId: number, callback: (prev: IActivity) => Partial<IActivity>) {
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			throw new Error('Не удалось получить чат')
@@ -43,7 +43,7 @@ class Activity {
 			throw new Error('Не удалось получить активность пользователя')
 		}
 
-		const res = await ActivityController.updateActivity(user.activity as Types.ObjectId, callback(activity))
+		const res = await ActivityController.updateById(user.activity as Types.ObjectId, callback(activity))
 
 		return res?.acknowledged
 	}

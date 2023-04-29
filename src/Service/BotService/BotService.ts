@@ -15,7 +15,7 @@ class Bot {
 	async generalMailing(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			const res = await UserController.register(bot, msg)
@@ -53,7 +53,7 @@ class Bot {
 	async getTeacher(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			const res = await UserController.register(bot, msg)
@@ -89,7 +89,7 @@ class Bot {
 	async getStatistics(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			const res = await UserController.register(bot, msg)
@@ -125,7 +125,7 @@ class Bot {
 	async getCabinets(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			const res = await UserController.register(bot, msg)
@@ -161,7 +161,7 @@ class Bot {
 	async getProfile(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			const res = await UserController.register(bot, msg)
@@ -204,7 +204,7 @@ class Bot {
 	async getRatings(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			const res = await UserController.register(bot, msg)
@@ -240,7 +240,7 @@ class Bot {
 	async getPair(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			const res = await UserController.register(bot, msg)
@@ -283,7 +283,7 @@ class Bot {
 	async getBell(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			const res = await UserController.register(bot, msg)
@@ -326,7 +326,7 @@ class Bot {
 	async getHelp(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			const res = await UserController.register(bot, msg)
@@ -369,7 +369,7 @@ class Bot {
 	async start(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const chat = await ChatController.getChat(chatId)
+		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
 			const res = await UserController.register(bot, msg)

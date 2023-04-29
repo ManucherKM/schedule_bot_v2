@@ -22,14 +22,14 @@ class Profile {
 		}
 	}
 
-	async createProfile(target: IProfile) {
+	async create(target: IProfile) {
 		try {
 			if (!target) {
 				console.log('Не удалось найти объект профиля')
 				return
 			}
 
-			const res = await ProfileService.createProfile(target)
+			const res = await ProfileService.create(target)
 
 			if (!res) {
 				console.log('Не удалось создать профиль')
@@ -42,14 +42,14 @@ class Profile {
 		}
 	}
 
-	async removeProfile(id: string) {
+	async removeById(id: string) {
 		try {
 			if (!id) {
 				console.log('ID профиля не найден')
 				return
 			}
 
-			const res = await ProfileService.removeProfile(id)
+			const res = await ProfileService.removeById(id)
 
 			if (!res) {
 				console.log('Не удалось удалить профиль')
@@ -62,14 +62,14 @@ class Profile {
 		}
 	}
 
-	async updateProfile(id: string, target: Partial<IProfile>) {
+	async updateById(id: string, target: Partial<IProfile>) {
 		try {
 			if (!id || !target) {
 				console.log('Не удалось найти id роли или объект с изменениями')
 				return
 			}
 
-			const res = await ProfileService.updateProfile(id, target)
+			const res = await ProfileService.updateById(id, target)
 
 			if (!res) {
 				console.log('Не удалось удалить профиль')

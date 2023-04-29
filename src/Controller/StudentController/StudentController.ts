@@ -24,14 +24,14 @@ class Student {
 		}
 	}
 
-	async createStudent(target: IStudent) {
+	async create(target: IStudent) {
 		try {
 			if (!target) {
 				console.log('Не удалось создать студента')
 				return
 			}
 
-			const res = await StudentService.createStudent(target)
+			const res = await StudentService.create(target)
 
 			if (!res) {
 				console.log('Не удалось создать студента')

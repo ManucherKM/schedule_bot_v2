@@ -38,14 +38,14 @@ class Division {
 		}
 	}
 
-	async createDivision(target: IDivision) {
+	async create(target: IDivision) {
 		try {
 			if (!target) {
 				console.log('Не удалось найти объект подразделения')
 				return
 			}
 
-			const res = await DivisionService.createDivision(target)
+			const res = await DivisionService.create(target)
 
 			if (!res) {
 				console.log('Не удалось создать подразделение')
@@ -58,14 +58,14 @@ class Division {
 		}
 	}
 
-	async removeDivision(id: string) {
+	async removeById(id: string) {
 		try {
 			if (!id) {
 				console.log('ID подразделения не найден')
 				return
 			}
 
-			const res = await DivisionService.removeDivision(id)
+			const res = await DivisionService.removeById(id)
 
 			if (!res) {
 				console.log('Не удалось удалить подразделение')
@@ -78,14 +78,14 @@ class Division {
 		}
 	}
 
-	async updateDivision(id: string, target: Partial<IDivision>) {
+	async updateById(id: string, target: Partial<IDivision>) {
 		try {
 			if (!id || !target) {
 				console.log('Не удалось найти id подразделения или объект с изменениями')
 				return
 			}
 
-			const res = await DivisionService.updateDivision(id, target)
+			const res = await DivisionService.updateById(id, target)
 
 			if (!res) {
 				console.log('Не удалось удалить подразделение')
