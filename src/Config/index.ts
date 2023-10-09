@@ -5,7 +5,7 @@ enum Commands {
 	getPair = '📚 Пары',
 	getTeacher = '🚪 Учитель',
 	getBell = '⏰ Звонки',
-	getCabinets = '🏢 Кабинеты',
+	// getCabinets = '🏢 Кабинеты',
 	getStatistics = '📊 Статистика',
 	generalMailing = '📢 Рассылка',
 	start = '/start',
@@ -19,7 +19,7 @@ enum EDivision {
 }
 
 enum ERoles {
-	admin = 'Администратор',
+	// admin = 'Администратор',
 	teacher = 'Учитель',
 	student = 'Студент',
 }

@@ -1,12 +1,5 @@
 import { ERoles } from '@/Config'
-import {
-	ActivityController,
-	AdminController,
-	ChatController,
-	StudentController,
-	TeacherController,
-	UserController,
-} from '@/Controller'
+import { ActivityController, ChatController, StudentController, TeacherController, UserController } from '@/Controller'
 import type TelegramApi from 'node-telegram-bot-api'
 import type { Message } from 'node-telegram-bot-api'
 import { IActivity } from '../types'
@@ -40,12 +33,12 @@ class Bot {
 			throw new Error('Не удалось обновить активность')
 		}
 
-		const isAdmin = user.role.name === ERoles.admin
+		// const isAdmin = user.role.name === ERoles.admin
 
-		if (isAdmin) {
-			const res = await AdminController.generalMailing(bot, msg)
-			return res
-		}
+		// if (isAdmin) {
+		// 	const res = await AdminController.generalMailing(bot, msg)
+		// 	return res
+		// }
 
 		return false
 	}
@@ -114,12 +107,12 @@ class Bot {
 			throw new Error('Не удалось обновить активность')
 		}
 
-		const isAdmin = user.role.name === ERoles.admin
+		// const isAdmin = user.role.name === ERoles.admin
 
-		if (isAdmin) {
-			const res = await AdminController.getStatistics(bot, msg)
-			return res
-		}
+		// if (isAdmin) {
+		// 	const res = await AdminController.getStatistics(bot, msg)
+		// 	return res
+		// }
 	}
 
 	async getCabinets(bot: TelegramApi, msg: Message) {
@@ -408,12 +401,12 @@ class Bot {
 			return res
 		}
 
-		const isAdmin = user.role.name === ERoles.admin
+		// const isAdmin = user.role.name === ERoles.admin
 
-		if (isAdmin) {
-			const res = await AdminController.start(bot, msg)
-			return res
-		}
+		// if (isAdmin) {
+		// 	const res = await AdminController.start(bot, msg)
+		// 	return res
+		// }
 	}
 }
 export const BotService = new Bot()

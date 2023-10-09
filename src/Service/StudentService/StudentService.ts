@@ -1,11 +1,18 @@
 import { Bells, Commands } from '@/Config'
-import { ChatController, ProfileController, SpkApiController, StudentController } from '@/Controller'
-import { CreateTable, SupplyReduction } from '@/Helper'
+import { ChatController, ProfileController, SpkApiController, StudentController, UserController } from '@/Controller'
+import {
+	ArrayToChunks,
+	CreateInlineKeyboard,
+	CreateTable,
+	GetMessageWithSchedule,
+	NextMessage,
+	SupplyReduction,
+} from '@/Helper'
 import { StudentModel, UserModel } from '@/Model'
 import { IStudent } from '@/Service/types'
 import { Types } from 'mongoose'
 import type TelegramApi from 'node-telegram-bot-api'
-import type { Message, SendMessageOptions } from 'node-telegram-bot-api'
+import type { InlineKeyboardButton, Message, SendMessageOptions } from 'node-telegram-bot-api'
 import { Menu } from './Buttons/Buttons'
 
 const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
@@ -168,10 +175,15 @@ class Student {
 		}
 
 		if (!student.profile) {
-			const message =
-				'Для просмотра оценок необходимо предоставить логин и пароль от учетной записи СПК.\nЧто бы просматривать свои оценки ответь на это сообщение (прим. пролестнув сообщение в левую сторону) указав свой логин и пароль в формате:\nЛОГИН ПАРОЛЬ'
+			const message = 'Для просмотра оценок необходимо предоставить логин и пароль от учетной записи СПК.'
 
-			const { message_id } = await bot.sendMessage(chatId, message)
+			await bot.sendMessage(chatId, message)
+
+			const messageForReply = 'Ответь на это сообщение указав свой логин и пароль в формате: ЛОГИН ПАРОЛЬ'
+
+			const { message_id } = await bot.sendMessage(chatId, messageForReply)
+
+			NextMessage.skip(chatId)
 
 			bot.onReplyToMessage(chatId, message_id, async msg => {
 				const text = msg.text
@@ -298,11 +310,65 @@ class Student {
 	async getTeacher(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
-		const message = 'Учителя'
+		const foundChat = await ChatController.getById(chatId)
 
-		const options: SendMessageOptions = {}
+		if (!foundChat) {
+			console.log('Не удалось найти чат.')
+			return
+		}
+
+		const foundUser = await (await UserController.getByChatId(foundChat._id))?.populate('division')
+
+		if (!foundUser) {
+			console.log('Не удалось найти пользователя.')
+			return
+		}
+
+		const message = 'Выбери учителя из списка:'
+
+		const btns: InlineKeyboardButton[] = []
+
+		const teachers = await SpkApiController.getTeachers(foundUser.division.shortName)
+
+		if (!teachers) {
+			const message = 'Бот не смог получить список учителей'
+			await bot.sendMessage(chatId, message)
+			throw new Error('Не удалось получить учителей')
+		}
+
+		for (const { name } of teachers) {
+			btns.push({ text: `${name.split(' ')[0]}`, callback_data: name })
+		}
+
+		const formatBtns = ArrayToChunks(btns, 4)
+
+		const options: SendMessageOptions = { reply_markup: CreateInlineKeyboard(formatBtns), parse_mode: 'HTML' }
 
 		await bot.sendMessage(chatId, message, options)
+
+		const isHandlerExists = bot.listenerCount('callback_query') >= 2
+
+		if (isHandlerExists) return
+
+		bot.on('callback_query', async ({ data }) => {
+			if (!data) {
+				console.log('Не удалось получить параметры кнопки')
+				return
+			}
+
+			const teacherName = data.split('.')[0]
+
+			const schedule = await SpkApiController.getSchedule(foundUser.division.shortName, null, teacherName)
+
+			if (!schedule) {
+				console.log('Не удалось получить расписание учителя')
+				return
+			}
+
+			const message = GetMessageWithSchedule(schedule)
+
+			await bot.sendMessage(chatId, message, { parse_mode: 'HTML' })
+		})
 
 		return true
 	}

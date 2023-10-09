@@ -1,6 +1,6 @@
 import { Bells, Commands } from '@/Config'
 import { ChatController, SpkApiController } from '@/Controller'
-import { CreateTable, SupplyReduction } from '@/Helper'
+import { CreateTable, GetMessageWithSchedule } from '@/Helper'
 import { TeacherModel, UserModel } from '@/Model'
 import { ITeacher } from '@/Service/types'
 import type TelegramApi from 'node-telegram-bot-api'
@@ -46,29 +46,7 @@ class Teacher {
 			return
 		}
 
-		let message = ''
-
-		for (let i = 0; i < schedule.length; i++) {
-			const item = schedule[i]
-
-			message += `\n<b>${days[i]}</b>: `
-
-			if (item.lessons.length === 0) {
-				message += 'выходной :)'
-				continue
-			}
-
-			item.lessons.forEach(lesson => {
-				const group = lesson.group || '-'
-				const discipline = SupplyReduction(lesson.discipline || '-', 26)
-				const auditoria = lesson.auditoria || '-'
-				const territory = lesson.territory?.split(')')[0].replace('(', '') || '-'
-
-				message += `\n<b>Пара ${
-					lesson.number_lesson
-				}.</b>\nПредмет: ${discipline}\nМесто: ${auditoria.toLowerCase()}\nПодразделение: ${territory}\nГруппа: ${group}\n`
-			})
-		}
+		const message = GetMessageWithSchedule(schedule)
 
 		const res = await bot.sendMessage(chatId, message, { parse_mode: 'HTML' })
 
@@ -130,7 +108,7 @@ class Teacher {
 
 		secondary.push([Commands.getHelp, user.activity.getHelp])
 		secondary.push([Commands.getPair, user.activity.getPair])
-		secondary.push([Commands.getCabinets, user.activity.getCabinets])
+		// secondary.push([Commands.getCabinets, user.activity.getCabinets])
 		secondary.push([Commands.getBell, user.activity.getBell])
 		secondary.push([Commands.getProfile, user.activity.getProfile])
 

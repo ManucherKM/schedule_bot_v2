@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import TelegramApi from 'node-telegram-bot-api'
 import { commands } from './Config/commands'
 import { init } from './Config/init'
+import { NextMessage } from './Helper'
 ;(async () => {
 	const { TOKEN, DB_URL } = process.env
 
@@ -35,6 +36,12 @@ import { init } from './Config/init'
 
 			if (isOther) {
 				const chatId = msg.chat.id
+
+				if (NextMessage.queque.includes(chatId)) {
+					NextMessage.remove(chatId)
+					return
+				}
+
 				const message = 'Похоже что ты ошибся командой'
 				await bot.sendMessage(chatId, message)
 			}

@@ -70,6 +70,12 @@ class User {
 	async register(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
 
+		const foundChat = await ChatController.getById(chatId)
+
+		if (foundChat) {
+			return
+		}
+
 		const sticker = path.join(__dirname, '..', '..', 'Sticker', 'run.tgs')
 
 		await bot.sendDocument(chatId, sticker)
@@ -125,6 +131,12 @@ class User {
 		bot.on('callback_query', async ({ data }) => {
 			if (!data) {
 				console.log('Не удалось получить параметры кнопки')
+				return
+			}
+
+			const foundChat = await ChatController.getById(chatId)
+
+			if (foundChat) {
 				return
 			}
 

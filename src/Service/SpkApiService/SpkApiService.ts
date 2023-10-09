@@ -96,10 +96,10 @@ class SpkApi {
 
 		const groups = groupsData
 			.filter(groupData => {
-				let isCurrentStage = true
+				let isCurrentStage = false
 
-				if (stage && groupData.curse !== stage[0]) {
-					isCurrentStage = false
+				if (groupData.curse.toString() === stage) {
+					isCurrentStage = true
 				}
 
 				const currentIdx = divisionsData.findIndex(({ id }) => id === groupData.division)
@@ -133,9 +133,14 @@ class SpkApi {
 
 			if (idx !== -1) {
 				schedule = schedule.map(({ lessons, date }) => {
-					const filteredLessons = lessons.filter(lesson => {
-						const lessonTerritoryIndex = territories.findIndex(({ id }) => id === lesson.territory)
-						return idx === lessonTerritoryIndex
+					const filteredLessons = lessons.filter(_ => {
+						const lessonTerritoryIndex = territories.findIndex(({ name }) => name.includes(division))
+
+						if (lessonTerritoryIndex === -1) {
+							return false
+						}
+
+						return true
 					})
 
 					return { date, lessons: filteredLessons }

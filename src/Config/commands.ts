@@ -21,10 +21,10 @@ export const commands: ICommand[] = [
 		regexp: new RegExp(`${Commands.getStatistics}`),
 		func: async (bot, msg) => BotController.getStatistics(bot, msg),
 	},
-	{
-		regexp: new RegExp(`${Commands.getCabinets}`),
-		func: async (bot, msg) => BotController.getCabinets(bot, msg),
-	},
+	// {
+	// 	regexp: new RegExp(`${Commands.getCabinets}`),
+	// 	func: async (bot, msg) => BotController.getCabinets(bot, msg),
+	// },
 	{
 		regexp: new RegExp(`${Commands.getProfile}`),
 		func: async (bot, msg) => BotController.getProfile(bot, msg),
