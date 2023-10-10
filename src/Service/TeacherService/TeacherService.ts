@@ -1,4 +1,4 @@
-import { Bells, Commands } from '@/Config'
+import { Bells, Commands, adminName } from '@/Config'
 import { ChatController, SpkApiController } from '@/Controller'
 import { CreateTable, GetMessageWithSchedule } from '@/Helper'
 import { TeacherModel, UserModel } from '@/Model'
@@ -123,8 +123,7 @@ class Teacher {
 
 	async getHelp(bot: TelegramApi, msg: Message) {
 		const chatId = msg.chat.id
-		const message =
-			'Если возникла какая-либо ошибка или есть идеи по улучшению бота пишите <a href="https://t.me/Manucher0504">админу</a>'
+		const message = `Если возникла какая-либо ошибка или есть идеи по улучшению бота пишите <a href="https://t.me/${adminName}">админу</a>`
 		const options: SendMessageOptions = {
 			parse_mode: 'HTML',
 			disable_web_page_preview: true,

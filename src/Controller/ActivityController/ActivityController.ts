@@ -23,6 +23,21 @@ class Activity {
 		}
 	}
 
+	async getAll() {
+		try {
+			const res = await ActivityService.getAll()
+
+			if (!res) {
+				console.log('Не удалось получить активность пользователей.')
+				return
+			}
+
+			return res
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
 	async create(target: IActivity) {
 		try {
 			if (!target) {

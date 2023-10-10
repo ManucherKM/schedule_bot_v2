@@ -17,6 +17,16 @@ class Chat {
 		}
 	}
 
+	async getAll() {
+		try {
+			const res = await ChatService.getAll()
+
+			return res
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
 	async create(target: IChat) {
 		try {
 			if (!target) {

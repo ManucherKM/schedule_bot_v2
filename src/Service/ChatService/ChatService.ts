@@ -18,6 +18,10 @@ class Chat {
 		const isDeleted = !!res.deletedCount
 		return isDeleted
 	}
+
+	async getAll() {
+		return await ChatModel.find()
+	}
 }
 
 export const ChatService = new Chat()

@@ -1,4 +1,4 @@
-import { ERoles, EStage } from '@/Config'
+import { ERoles, EStage, adminName } from '@/Config'
 import {
 	ActivityController,
 	ChatController,
@@ -169,6 +169,12 @@ class User {
 				const message = 'Записал ✍\n\nСледующий вопрос.\n\n<b>Выбери свою роль:</b>'
 
 				return await bot.sendMessage(chatId, message, options)
+			}
+
+			if (data === ERoles.admin) {
+				const message = `Чтобы стать администратором напиши <a href="https://t.me/${adminName}">мне</a>`
+
+				return await bot.sendMessage(chatId, message, { parse_mode: 'HTML', disable_web_page_preview: true })
 			}
 
 			if (data === ERoles.student) {

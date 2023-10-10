@@ -19,7 +19,7 @@ enum EDivision {
 }
 
 enum ERoles {
-	// admin = 'Администратор',
+	admin = 'Администратор',
 	teacher = 'Учитель',
 	student = 'Студент',
 }
@@ -66,4 +66,6 @@ const Bells = [
 	},
 ]
 
-export { Commands, EDivision, ERoles, EStage, Bells }
+const adminName = 'Manucher0504'
+
+export { Commands, EDivision, ERoles, EStage, Bells, adminName }

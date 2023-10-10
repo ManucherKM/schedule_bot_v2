@@ -47,6 +47,10 @@ class Activity {
 
 		return res?.acknowledged
 	}
+
+	async getAll() {
+		return await ActivityModel.find()
+	}
 }
 
 export const ActivityService = new Activity()

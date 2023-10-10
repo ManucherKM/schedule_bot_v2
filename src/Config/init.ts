@@ -3,10 +3,10 @@ import { IDivision, IRole } from '@/Service/types'
 import { EDivision, ERoles } from '.'
 
 const roles: IRole[] = [
-	// {
-	// 	name: ERoles.admin,
-	// 	description: 'Управляет ботом',
-	// },
+	{
+		name: ERoles.admin,
+		description: 'Управляет ботом',
+	},
 	{
 		name: ERoles.student,
 		description: 'Использует функционал студента',
