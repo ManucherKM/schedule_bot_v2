@@ -105,13 +105,6 @@ class User {
 
 		const candidats: ICandidate[] = []
 
-		let candidate = candidats[candidats.findIndex(p => p.chatId === chatId)]
-
-		if (!candidate) {
-			candidats.push({ chatId })
-			candidate = candidats[candidats.length - 1]
-		}
-
 		const groups = await SpkApiController.getGroups()
 
 		if (!groups) {
@@ -129,6 +122,14 @@ class User {
 		if (isHandlerExists) return
 
 		bot.on('callback_query', async ({ data }) => {
+			console.log(candidats)
+
+			const idx = candidats.findIndex(p => p.chatId === chatId)
+
+			if (idx === -1) {
+				candidats[candidats.length] = { chatId }
+			}
+
 			if (!data) {
 				console.log('Не удалось получить параметры кнопки')
 				return
@@ -156,7 +157,7 @@ class User {
 			}
 
 			if (divisions.find(d => d.shortName === data)) {
-				candidate.division = data
+				candidats[idx].division = data
 
 				const btns: InlineKeyboardButton[][] = []
 
@@ -178,7 +179,7 @@ class User {
 			}
 
 			if (data === ERoles.student) {
-				candidate.role = data
+				candidats[idx].role = data
 
 				const btns: InlineKeyboardButton[][] = []
 
@@ -194,11 +195,11 @@ class User {
 			}
 
 			if (data === ERoles.teacher) {
-				candidate.role = data
+				candidats[idx].role = data
 
 				const btns: InlineKeyboardButton[] = []
 
-				const teachers = await SpkApiController.getTeachers(candidate.division)
+				const teachers = await SpkApiController.getTeachers(candidats[idx].division)
 
 				if (!teachers) {
 					const message = 'Бот не смог получить список учителей'
@@ -220,9 +221,9 @@ class User {
 			}
 
 			if (stages.includes(data)) {
-				candidate.stage = data
+				candidats[idx].stage = data
 
-				const groups = await SpkApiController.getGroups(candidate.division, data)
+				const groups = await SpkApiController.getGroups(candidats[idx].division, data)
 
 				if (!groups?.length) {
 					await bot.sendMessage(chatId, 'Не удалось найти группы по заданным параметрам')
@@ -245,17 +246,20 @@ class User {
 			}
 
 			if (groups.includes(data)) {
-				candidate.group = data
+				candidats[idx].group = data
 
 				const message =
 					'Успех 🎉\n\nРегистрация окончена, чтобы использовать функционал бота перезапусти его командой /start	'
 
-				if (!candidate.stage) {
+				if (!candidats[idx].stage) {
 					await bot.sendMessage(chatId, 'Не удалось получить курс студента')
 					return
 				}
 
-				const student = await StudentController.create({ group: candidate.group, stage: candidate.stage })
+				const student = await StudentController.create({
+					group: candidats[idx].group as string,
+					stage: candidats[idx].stage as string,
+				})
 
 				if (!student) {
 					console.log('Не удалось создать учителя')
@@ -276,14 +280,14 @@ class User {
 					return
 				}
 
-				const roleId = roles.find(r => r.name === candidate.role)?._id
+				const roleId = roles.find(r => r.name === candidats[idx].role)?._id
 
 				if (!roleId) {
 					console.log('Не удалось получить роль')
 					return
 				}
 
-				const divisionId = divisions.find(d => d.shortName === candidate.division)?._id
+				const divisionId = divisions.find(d => d.shortName === candidats[idx].division)?._id
 
 				if (!divisionId) {
 					console.log('Не удалось получить подразделение')
@@ -304,25 +308,18 @@ class User {
 					return
 				}
 
-				const idxUser = candidats.findIndex(c => c.chatId === chatId)
-
-				if (idxUser === -1) {
-					console.log('Не удалось найти объект кандидата')
-					return
-				}
-
-				candidats.splice(idxUser, 1)
+				candidats.splice(idx, 1)
 
 				return await bot.sendMessage(chatId, message)
 			}
 
 			if (teachers.includes(data)) {
-				candidate.fullName = data
+				candidats[idx].fullName = data
 
 				const message =
 					'Успех 🎉\n\nРегистрация окончена, чтобы использовать функционал бота перезапусти его командой /start	'
 
-				const teacher = await TeacherController.create({ fullName: candidate.fullName })
+				const teacher = await TeacherController.create({ fullName: candidats[idx].fullName as string })
 
 				if (!teacher) {
 					console.log('Не удалось создать учителя')
@@ -343,14 +340,14 @@ class User {
 					return
 				}
 
-				const roleId = roles.find(r => r.name === candidate.role)?._id
+				const roleId = roles.find(r => r.name === candidats[idx].role)?._id
 
 				if (!roleId) {
 					console.log('Не удалось получить роль')
 					return
 				}
 
-				const divisionId = divisions.find(d => d.shortName === candidate.division)?._id
+				const divisionId = divisions.find(d => d.shortName === candidats[idx].division)?._id
 
 				if (!divisionId) {
 					console.log('Не удалось получить подразделение')
@@ -371,14 +368,7 @@ class User {
 					return
 				}
 
-				const idxUser = candidats.findIndex(c => c.chatId === chatId)
-
-				if (idxUser === -1) {
-					console.log('Не удалось найти объект кандидата')
-					return
-				}
-
-				candidats.splice(idxUser, 1)
+				candidats.splice(idx, 1)
 
 				return await bot.sendMessage(chatId, message)
 			}
