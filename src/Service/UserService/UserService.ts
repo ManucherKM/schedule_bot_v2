@@ -122,8 +122,6 @@ class User {
 		if (isHandlerExists) return
 
 		bot.on('callback_query', async ({ data }) => {
-			console.log(candidats)
-
 			const idx = candidats.findIndex(p => p.chatId === chatId)
 
 			if (idx === -1) {
