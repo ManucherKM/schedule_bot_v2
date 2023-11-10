@@ -70,7 +70,7 @@ class Student {
 			message += `\n<b>${days[i]}</b>: `
 
 			if (item.lessons.length === 0) {
-				message += 'выходной :)'
+				message += 'нет пар'
 				continue
 			}
 
@@ -79,9 +79,7 @@ class Student {
 				const auditoria = lesson.auditoria || '-'
 				const territory = lesson.territory?.split(')')[0].replace('(', '') || '-'
 
-				message += `\n<b>Пара ${
-					lesson.number_lesson
-				}.</b>\nПредмет: ${discipline}\nМесто: ${auditoria.toLowerCase()}\nПодразделение: ${territory}\n`
+				message += `\n<b>Пара ${lesson.number_lesson}.</b>\nПредмет: ${discipline}\nМесто: ${auditoria}\nПодразделение: ${territory}\n`
 			})
 		}
 

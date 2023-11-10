@@ -336,7 +336,7 @@ class Bot {
 		const chat = await ChatController.getById(chatId)
 
 		if (!chat) {
-			const res = await UserController.register(bot, msg)			
+			const res = await UserController.register(bot, msg)
 			return res
 		}
 

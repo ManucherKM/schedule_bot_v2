@@ -74,7 +74,6 @@ import { ICandidate } from './Service/types'
 			if (foundChat) {
 				return
 			}
-			console.log(candidats, data)
 
 			if (data === next) {
 				const btns: InlineKeyboardButton[][] = []
